@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { StudentDashboard } from '@/components/StudentDashboard';
 import {
   ArrowUpRight,
   Loader2,
@@ -41,6 +42,7 @@ const workflow = [
 ];
 
 function App() {
+  const [view, setView] = useState<'landing' | 'dashboard'>('landing');
   const [menuOpen, setMenuOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -74,6 +76,10 @@ function App() {
     setEmail('');
   }
 
+  if (view === 'dashboard') {
+    return <StudentDashboard onBackToLanding={() => setView('landing')} />;
+  }
+
   return (
     <main className="site-shell">
       <div className="ambient ambient-one" />
@@ -90,7 +96,21 @@ function App() {
           <a href="#product" onClick={() => setMenuOpen(false)}>Product</a>
           <a href="#how-it-works" onClick={() => setMenuOpen(false)}>How it works</a>
           <a href="#architecture" onClick={() => setMenuOpen(false)}>Architecture</a>
-          <a className="nav-cta" href="#get-started" onClick={() => setMenuOpen(false)}>Get started <ArrowUpRight size={15} /></a>
+          <button
+            className="nav-cta"
+            onClick={() => {
+              setMenuOpen(false);
+              setView('dashboard');
+            }}
+            style={{
+              background: 'linear-gradient(135deg, #3a7bff, #6749de)',
+              color: '#fff',
+              border: 'none',
+              cursor: 'pointer'
+            }}
+          >
+            Launch Student Pilot <ArrowUpRight size={15} />
+          </button>
         </div>
       </nav>
 
@@ -100,15 +120,21 @@ function App() {
           <h1>Your campus.<br /><span>Your tasks.</span><br />Your AI copilot.</h1>
           <p className="hero-lede">Turn scattered university information into instant answers and automated action.</p>
           <div className="hero-actions">
-            <a className="button button-primary" href="#product">Explore Campus Copilot <ArrowUpRight size={17} /></a>
+            <button
+              className="button button-primary"
+              onClick={() => setView('dashboard')}
+              style={{ border: 'none', cursor: 'pointer' }}
+            >
+              Open Student Copilot <ArrowUpRight size={17} />
+            </button>
             <a className="button button-ghost" href="#how-it-works"><span className="play-icon"><Play size={12} fill="currentColor" /></span> See how it works</a>
           </div>
           <div className="hero-proof"><div className="avatar-stack"><span>AK</span><span>AI</span><span>24</span></div><span>Built for the way students actually work.</span></div>
         </div>
         <div className="hero-visual">
           <div className="visual-glow" />
-          <div className="command-window">
-            <div className="window-top"><div className="window-dots"><i /><i /><i /></div><span className="window-label"><span className="live-dot" /> copilot live</span><span className="window-time">09:41</span></div>
+          <div className="command-window" onClick={() => setView('dashboard')} style={{ cursor: 'pointer' }} title="Click to interact with Campus Copilot">
+            <div className="window-top"><div className="window-dots"><i /><i /><i /></div><span className="window-label"><span className="live-dot" /> copilot live (click to open)</span><span className="window-time">09:41</span></div>
             <div className="window-body">
               <div className="window-side"><div className="mini-logo"><Bot size={16} /></div><span className="side-active"><MessageSquare size={15} /></span><span><CalendarDays size={15} /></span><span><SquareCheckBig size={15} /></span><span><Bell size={15} /></span></div>
               <div className="chat-panel">
