@@ -18,7 +18,7 @@ const STOP_WORDS = new Set([
  * Tokenize and normalize text into clean keywords + bigrams
  */
 export function tokenize(text: string): string[] {
-  const cleaned = text.toLowerCase().replace(/[^a-z0-9\s-_#]/g, ' ');
+  const cleaned = text.toLowerCase().replace(/[-_#]/g, '').replace(/[^a-z0-9\s]/g, ' ');
   const rawWords = cleaned.split(/\s+/).filter(w => w.length > 1 && !STOP_WORDS.has(w));
   
   // Include bigrams for strong phrase matching (e.g. "data structures", "exam notice")
@@ -60,7 +60,7 @@ export function cosineSimilarity(vecA: number[], vecB: number[]): number {
 /**
  * Similarity threshold: queries scoring below this are strictly discarded (no hallucinations/guessing)
  */
-export const RETRIEVAL_SIMILARITY_THRESHOLD = 0.20;
+export const RETRIEVAL_SIMILARITY_THRESHOLD = 0.05;
 
 /**
  * Chunk a raw document into coherent semantic blocks

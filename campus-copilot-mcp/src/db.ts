@@ -364,6 +364,13 @@ Important Instructions for Students:
     }
     return msg;
   }
+
+  async getThreadMessages(threadId: string, limit: number = 5): Promise<ChatMessage[]> {
+    const msgs = Array.from(this.messages.values())
+      .filter(m => m.thread_id === threadId)
+      .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    return msgs.slice(-limit);
+  }
 }
 
 export const db = new CampusDatabase();

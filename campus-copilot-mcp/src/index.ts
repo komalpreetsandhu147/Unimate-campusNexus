@@ -138,11 +138,21 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 400, { error: 'Query is required' });
       }
 
+      // Fetch previous 2-3 turns for multi-turn context
+      const recentMsgs = await db.getThreadMessages(threadId, 4);
+      let enhancedQuery = query;
+      if (recentMsgs.length > 0) {
+        const prevUserMsgs = recentMsgs.filter(m => m.role === 'user').map(m => m.content);
+        if (prevUserMsgs.length > 0) {
+          enhancedQuery = `${prevUserMsgs.join(' ')} ${query}`;
+        }
+      }
+
       // Log User Message
       await db.logMessage(threadId, 'user', query, []);
 
-      // Execute tool
-      const toolResult = await handleSearchCampusDocuments({ query });
+      // Execute tool using enhanced multi-turn query
+      const toolResult = await handleSearchCampusDocuments({ query: enhancedQuery });
 
       // Log Assistant Message with citations
       await db.logMessage(threadId, 'assistant', toolResult.answer, toolResult.citations || []);

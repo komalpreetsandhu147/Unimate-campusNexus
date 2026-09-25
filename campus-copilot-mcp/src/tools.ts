@@ -77,23 +77,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   }
 ];
 
-// Keywords indicating explicitly off-scope non-campus inquiries
-const OFF_SCOPE_PATTERNS = [
-  /\b(who was|who is|tell me a joke|write a poem|recipe|capital of|movie|sports score|crypto|bitcoin|weather in paris|general knowledge)\b/i,
-  /\b(president of|prime minister of|write python code for snake|flappy bird|how to bake|lyrics to)\b/i
-];
-
-/**
- * Checks if a query is within Akal University campus scope
- */
-function isCampusQuery(query: string): boolean {
-  for (const pattern of OFF_SCOPE_PATTERNS) {
-    if (pattern.test(query)) {
-      return false;
-    }
-  }
-  return true;
-}
+// Keyword-based scope detection removed - relying exclusively on retrieval similarity threshold.
 
 /**
  * Grounded LLM generation simulation (strictly based on retrieved chunks)
@@ -136,15 +120,7 @@ export async function handleSearchCampusDocuments(args: {
   const { query, course_code, department } = args;
 
   // 1. Bake in AGENTS.md scope refusal at tool level
-  if (!isCampusQuery(query)) {
-    return {
-      scope_declined: true,
-      refusal_reason: 'out_of_scope_query',
-      answer: 'I am Campus Copilot, specifically specialized for Akal University campus information, notices, syllabi, deadlines, and student tasks. I am unable to answer general knowledge or off-campus queries without verified university documentation.',
-      citations: [],
-      action_chips: []
-    };
-  }
+  // (Removed keyword regex check, relying strictly on threshold below)
 
   // 2. Vector search against indexed chunks
   const allChunks = db.getAllChunks();
